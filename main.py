@@ -1,6 +1,7 @@
 ### LIBRARIES ###
 from enum import Enum
 from time import sleep
+from math import floor
 
 ### GLOBALS ###
 
@@ -42,20 +43,24 @@ class Workspace:
 		return uuid
 
 	def getObject(self, uuid):
-		return self.Objects[uuid+1]
+		return self.Objects[uuid]
 
 	def getAllObjects(self):
 		return self.Objects
 		
 	def getGlobalTime(self):
-		return TICK / FPS
+		return floor(TICK/FPS*100)/100
 
 	def setProperty(self, property: Property, value):
 		if property == Property.Gravity:
 			if type(value).__name__ == "int":
 				self.Gravity = value
 				return True, f"Set gravity to {value}"
-				
+		else:return(False,None)
+		
+	def getProperty(self, property: Property):
+		if property == Property.Gravity: return True, self.Gravity
+		else:return(False,None)
 class Object:
 
 	def __init__(self):
@@ -84,14 +89,21 @@ class Object:
 			if type(value).__name__ == "tuple":
 				self.Position = value
 				return True, f"Set position to {value}"
-		if property == Property.Velocity:
+		elif property == Property.Velocity:
 			if type(value).__name__ == "tuple":
 				self.Velocity = value
 				return True, f"Set velocity to {value}"
-		if property == Property.Mass:
+		elif property == Property.Mass:
 			if type(value).__name__ == "int":
 				self.Mass = value
 				return True, f"Set mass to {value}"
+		else:return(False,None)
+	
+	def getProperty(self, property: Property):
+		if property == Property.Position: return True, self.Position
+		elif property == Property.Velocity: return True, self.Velocity
+		elif property == Property.Mass: return True, self.Mass
+		else:return(False,None)
 
 
 
@@ -116,9 +128,12 @@ def main():
 	while True:
 		sleep(1 / FPS)
 		stepAll()
+		print(f"At tick {TICK} and time {work.getGlobalTime()}")
 		for obj in work.getAllObjects().values():
 			print(f"--- Object #{obj.uuid} ---")
-			print(f"Position: {obj.Position}")
+			print(f"Position: {obj.getProperty(Property.Position)[1]}")
+			print(f"Velocity: {obj.getProperty(Property.Velocity)[1]}")
+			print(f"Mass: {obj.getProperty(Property.Mass)[1]}")
 		
 		TICK += 1
 
