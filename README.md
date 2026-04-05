@@ -5,7 +5,7 @@
 
 [OpenPhysicsEngine](https://github.com/theothegooddog/openphysicsengine) is an open-source physics engine that you can use or branch off of for free! It is still in _beta_, but after enough updates, it should be pretty good!
 
-##### update: its no longer in beta!
+###### update: its no longer in beta!
 
 ---
 
