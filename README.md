@@ -9,7 +9,17 @@
 
 ---
 
-Version: 1.2.9
+Version: 1.3.0
+<br>
+Current features:
+- Collisions
+- Objects (adding & getting)
+- Floors
+- Position
+- Velocites
+- Time (ticks & seconds)
+- Gravity
+- Gravity **_direction_**
 <br>
 Requirements: `pip install math time`
 <br>
