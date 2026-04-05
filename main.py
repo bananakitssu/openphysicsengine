@@ -112,6 +112,7 @@ def stepAll():
 
 # Main loop
 def main():
+	global TICK
 	while True:
 		sleep(1 / FPS)
 		stepAll()
