@@ -8,6 +8,9 @@
 ---
 
 Version: 1.2.9
+<br>
+Requirements: `pip install math time`
+<br>
 Updates:
 
 1.2.5
