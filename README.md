@@ -49,3 +49,7 @@ Updates:
 1.3.1
 
 - added friction + edited main loop pt. 2
+
+1.3.2
+
+- various changes tbh idk what i added
