@@ -16,6 +16,7 @@ class Property(Enum):
 	Position = "position"
 	Velocity = "velocity"
 	Restitution = "restitution"
+	Friction = "friction"
 
 	@staticmethod
 	def from_string(name: str):
@@ -93,6 +94,7 @@ class Object:
 	def __init__(self):
 		self.Mass = 0
 		self.Restitution = 0
+		self.Friction = 0
 		self.Position = [0, 0, 0]
 		self.Velocity = [0, 0, 0]
 		self.workspace = None
@@ -106,7 +108,8 @@ class Object:
 			self.Mass = 5
 			self.Position = [0, 0, 0]
 			self.Velocity = [0, 0, 0]
-			self.Restitution
+			self.Restitution = 0.7
+			self.Friction = 2
 		elif type == "Floor":
 			self.Mass = 0
 			self.Position = [0, 0, 0]
@@ -121,13 +124,14 @@ class Object:
 	def step(self):
 		gx, gy, gz = self.workspace.GravityDirection
 		g = self.workspace.Gravity
+		f = self.Friction
 
 		ax, ay, az = gx * g, gy * g, gz * g
 
 		self.Velocity[0] += ax
 		self.Velocity[1] += ay
 		self.Velocity[2] += az
-
+		
 		self.Position[0] += self.Velocity[0]
 		self.Position[1] += self.Velocity[1]
 		self.Position[2] += self.Velocity[2]
@@ -138,6 +142,9 @@ class Object:
 				if self.Position[1] <= floor.Position[1]:
 					self.Position[1] = floor.Position[1]
 					self.Velocity[1] = self.Velocity[1]*-self.Restitution
+					self.Velocity[0] *= (f/100)
+					self.Velocity[2] *= (f/100)
+
 					
 	def setProperty(self, property: Property, value):
 		success = False
@@ -157,6 +164,10 @@ class Object:
 		elif property == Property.Restitution and isinstance(value, float):
 			self.Restitution = value
 			success = True
+		
+		elif property == Property.Friction and isinstance(value, int):
+			self.Friction = value
+			success = True
 	
 		if success:
 			if hasattr(self, "_listeners") and property in self._listeners:
@@ -172,6 +183,7 @@ class Object:
 		elif property == Property.Velocity: return True, self.Velocity
 		elif property == Property.Mass: return True, self.Mass
 		elif property == Property.Restitution: return True, self.Restitution
+		elif property == Property.Friction: return True, self.Friction
 		else:return(False,None)
 	
 	def propertyChanged(self, property: Property, callback):
@@ -190,7 +202,10 @@ class Object:
 work = Workspace()
 floor = Object().create("Floor")
 point = Object().create("Point")
-point.setProperty(Property.Restitution, 0.95)
+point.setProperty(Property.Restitution, 0.7)
+point.setProperty(Property.Position, (-50, 50, 0))
+point.setProperty(Property.Velocity, (2, 0, 0))
+point.setProperty(Property.Friction, 2)
 floor.setProperty(Property.Position, (0, -20, 0))
 work.addObject(point)
 work.addObject(floor)
@@ -206,13 +221,8 @@ def main():
 	while True:
 		sleep(1 / FPS)
 		stepAll()
-		print(f"At tick {TICK} and time {work.getGlobalTime()}")
 		for obj in work.getAllObjects().values():
-			print(f"--- Object #{obj.uuid} ---")
-			print(f"Position: {obj.getProperty(Property.Position)[1]}")
-			print(f"Velocity: {obj.getProperty(Property.Velocity)[1]}")
-			print(f"Mass: {obj.getProperty(Property.Mass)[1]}")
-		
+			print(obj.Position)
 		TICK += 1
 
 # Start program
