@@ -1,3 +1,16 @@
+"""
+  ___  ____  _____ _   _       ____  _   ___   ______ ___ ____ ____  
+ / _ \|  _ \| ____| \ | |     |  _ \| | | \ \ / / ___|_ _/ ___/ ___| 
+| | | | |_) |  _| |  \| |_____| |_) | |_| |\ V /\___ \| | |   \___ \ 
+| |_| |  __/| |___| |\  |_____|  __/|  _  | | |  ___) | | |___ ___) |
+ \___/|_|   |_____|_| \_|     |_|   |_| |_| |_| |____/___\____|____/ 
+
+Open-Physics is an open-source physics engine.
+Repo: https://github.com/theothegooddog/openphysicsengine
+
+"""
+
+
 ### LIBRARIES ###
 from enum import Enum
 from time import sleep
@@ -11,12 +24,13 @@ TICK = 0
 ### HELPERS ###
 
 class Property(Enum):
-	Gravity = "gravity"
-	Mass = "mass"
-	Position = "position"
-	Velocity = "velocity"
-	Restitution = "restitution"
-	Friction = "friction"
+	Gravity = "Gravity"
+	Mass = "Mass"
+	Position = "Position"
+	Velocity = "Velocity"
+	Restitution = "Restitution"
+	Friction = "Friction"
+	AirResistance = "Air Resistance"
 
 	@staticmethod
 	def from_string(name: str):
@@ -52,6 +66,7 @@ class Workspace:
 		self.Gravity = 0.5
 		self.Objects = {}
 		self.GravityDirection = (0, -1, 0)
+		self.AirResistance = 0.003
 		self.Floor = None
 
 	def addObject(self, obj):
@@ -84,10 +99,15 @@ class Workspace:
 			if type(value).__name__ == "int":
 				self.Gravity = value
 				return True, f"Set gravity to {value}"
+		if property == Property.AirResistance:
+			if type(value).__name__ == "float":
+				self.AirResistance = value
+				return True, f"Set Air Resistance to {value}"
 		else:return(False,None)
 		
 	def getProperty(self, property: Property):
 		if property == Property.Gravity: return True, self.Gravity
+		elif property == Property.AirResistance: return True, self.AirResistance
 		else:return(False,None)
 
 class Object:
@@ -125,6 +145,7 @@ class Object:
 		gx, gy, gz = self.workspace.GravityDirection
 		g = self.workspace.Gravity
 		f = self.Friction
+		r = self.workspace.AirResistance
 
 		ax, ay, az = gx * g, gy * g, gz * g
 
@@ -141,10 +162,10 @@ class Object:
 			if floor:
 				if self.Position[1] <= floor.Position[1]:
 					self.Position[1] = floor.Position[1]
-					self.Velocity[1] = self.Velocity[1]*-self.Restitution
-					self.Velocity[0] *= (f/100)
-					self.Velocity[2] *= (f/100)
-
+					self.Velocity[1] = self.Velocity[1]*-self.Restitution #bouncy
+					self.Velocity[0] *= 1+(f/100)
+					self.Velocity[2] *= 1+(f/100)
+		self.Velocity[1] *= 1+(f/100)
 					
 	def setProperty(self, property: Property, value):
 		success = False
@@ -198,8 +219,8 @@ class Object:
 
 
 
-# Startup
-work = Workspace()
+# Example
+'''work = Workspace()
 floor = Object().create("Floor")
 point = Object().create("Point")
 point.setProperty(Property.Restitution, 0.7)
@@ -209,6 +230,7 @@ point.setProperty(Property.Friction, 2)
 floor.setProperty(Property.Position, (0, -20, 0))
 work.addObject(point)
 work.addObject(floor)
+work.setProperty(Property.AirResistance, 1)
 
 # Functions / Helpers
 def stepAll():
@@ -228,3 +250,4 @@ def main():
 # Start program
 
 main()
+'''
