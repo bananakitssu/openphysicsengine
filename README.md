@@ -45,3 +45,7 @@ Updates:
 
 - added collisions, floors, restitution, and miscellaneous changes
 - also i changed readme to have a/b for alpha/beta
+
+1.3.1
+
+- added friction + edited main loop pt. 2
