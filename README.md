@@ -53,3 +53,8 @@ Updates:
 1.3.2
 
 - various changes tbh idk what i added
+
+1.3.3
+
+- 33
+- also added anchored property
