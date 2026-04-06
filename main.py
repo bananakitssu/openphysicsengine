@@ -31,6 +31,7 @@ class Property(Enum):
 	Restitution = "Restitution"
 	Friction = "Friction"
 	AirResistance = "Air Resistance"
+	Anchored = "Anchored"
 
 	@staticmethod
 	def from_string(name: str):
@@ -117,6 +118,7 @@ class Object:
 		self.Friction = 0
 		self.Position = [0, 0, 0]
 		self.Velocity = [0, 0, 0]
+		self.Anchored = True
 		self.workspace = None
 		self.uuid = None
 		self.Type = None
@@ -130,18 +132,20 @@ class Object:
 			self.Velocity = [0, 0, 0]
 			self.Restitution = 0.7
 			self.Friction = 2
+			self.Anchored = False
 		elif type == "Floor":
 			self.Mass = 0
 			self.Position = [0, 0, 0]
 			self.Velocity = [0, 0, 0]
+			self.Anchored = True
 			def reset(*args):
-				self.Mass = 0
-				self.Velocity = [0, 0, 0]
-			self.propertyChanged(Property.Velocity, reset)
+				self.Anchored = True
+			self.propertyChanged(Property.Anchored, reset)
 		self.Type = type
 		return self
 
 	def step(self):
+		if not self.Anchored:return(None)
 		gx, gy, gz = self.workspace.GravityDirection
 		g = self.workspace.Gravity
 		f = self.Friction
@@ -189,6 +193,10 @@ class Object:
 		elif property == Property.Friction and isinstance(value, int):
 			self.Friction = value
 			success = True
+			
+		elif property == Property.Anchored and isinstance(value, bool):
+			self.Anchored = value
+			success = True
 	
 		if success:
 			if hasattr(self, "_listeners") and property in self._listeners:
@@ -205,6 +213,7 @@ class Object:
 		elif property == Property.Mass: return True, self.Mass
 		elif property == Property.Restitution: return True, self.Restitution
 		elif property == Property.Friction: return True, self.Friction
+		elif property == Property.Anchored: return True, self.Anchored
 		else:return(False,None)
 	
 	def propertyChanged(self, property: Property, callback):
