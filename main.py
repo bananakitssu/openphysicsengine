@@ -10,7 +10,6 @@ Repo: https://github.com/theothegooddog/openphysicsengine
 
 """
 
-
 ### LIBRARIES ###
 from enum import Enum
 from time import sleep
@@ -20,8 +19,15 @@ from math import floor as mfloor
 
 FPS = 30
 TICK = 0
+LIBRARY_MODE = bool(__name__ != "__main__")
 
 ### HELPERS ###
+
+
+class MathEnum():
+	Huge = 10**1000
+	Min = 1 / (10**20)
+
 
 class Property(Enum):
 	Gravity = "Gravity"
@@ -32,23 +38,26 @@ class Property(Enum):
 	Friction = "Friction"
 	AirResistance = "Air Resistance"
 	Anchored = "Anchored"
+	Size = "Size"
 
 	@staticmethod
 	def from_string(name: str):
 		if not isinstance(name, str):
 			raise TypeError(f"Expected str, got {type(name).__name__}")
 		try:
-			return Property(name.lower())
+			return Property(name)
 		except ValueError:
 			raise ValueError(f"Unknown property: {name}")
 
+
 def prop(name: str) -> Property:
 	return Property.from_string(name)
-	
+
+
 class ObjectType(Enum):
 	Point = "point"
 	Floor = "floor"
-	
+
 	@staticmethod
 	def from_string(name: str):
 		if not isinstance(name, str):
@@ -58,8 +67,10 @@ class ObjectType(Enum):
 		except ValueError:
 			raise ValueError(f"Unknown type: {name}")
 
+
 def objt(name: str) -> ObjectType:
 	return ObjectType.from_string(name)
+
 
 class Workspace:
 
@@ -88,10 +99,10 @@ class Workspace:
 
 	def getAllObjects(self):
 		return self.Objects
-		
+
 	def getGlobalTime(self):
-		return mfloor(TICK/FPS*100)/100
-	
+		return mfloor(TICK / FPS * 100) / 100
+
 	def getFloor(self):
 		return self.Floor
 
@@ -104,32 +115,39 @@ class Workspace:
 			if type(value).__name__ == "float":
 				self.AirResistance = value
 				return True, f"Set Air Resistance to {value}"
-		else:return(False,None)
-		
+		else:
+			return (False, None)
+
 	def getProperty(self, property: Property):
 		if property == Property.Gravity: return True, self.Gravity
 		elif property == Property.AirResistance: return True, self.AirResistance
-		else:return(False,None)
+		else: return (False, None)
+
 
 class Object:
+
 	def __init__(self):
 		self.Mass = 0
 		self.Restitution = 0
 		self.Friction = 0
 		self.Position = [0, 0, 0]
 		self.Velocity = [0, 0, 0]
+		self.Size = [
+		 0, 0, 0
+		]  #Note for rendering: Size is [width, height, length] or [x, y, z]
 		self.Anchored = True
 		self.workspace = None
 		self.uuid = None
 		self.Type = None
 		self._listeners = {}
-		
+
 	def create(self, type: ObjectType):
 		type = str(type)
 		if type == "Point":
 			self.Mass = 5
 			self.Position = [0, 0, 0]
 			self.Velocity = [0, 0, 0]
+			self.Size = [2, 1, 4]
 			self.Restitution = 0.7
 			self.Friction = 2
 			self.Anchored = False
@@ -137,15 +155,18 @@ class Object:
 			self.Mass = 0
 			self.Position = [0, 0, 0]
 			self.Velocity = [0, 0, 0]
+			self.Size = [2047, 0, 2047]
 			self.Anchored = True
+
 			def reset(*args):
 				self.Anchored = True
+
 			self.propertyChanged(Property.Anchored, reset)
 		self.Type = type
 		return self
 
 	def step(self):
-		if not self.Anchored:return(None)
+		if self.Anchored: return (None)
 		gx, gy, gz = self.workspace.GravityDirection
 		g = self.workspace.Gravity
 		f = self.Friction
@@ -156,57 +177,82 @@ class Object:
 		self.Velocity[0] += ax
 		self.Velocity[1] += ay
 		self.Velocity[2] += az
-		
+
 		self.Position[0] += self.Velocity[0]
 		self.Position[1] += self.Velocity[1]
 		self.Position[2] += self.Velocity[2]
-		
+
 		if self.Type == "Point":
 			floor = self.workspace.getFloor()
 			if floor:
-				if self.Position[1] <= floor.Position[1]:
-					self.Position[1] = floor.Position[1]
-					self.Velocity[1] = self.Velocity[1]*-self.Restitution #bouncy
-					self.Velocity[0] *= 1+(f/100)
-					self.Velocity[2] *= 1+(f/100)
-		self.Velocity[1] *= 1+(f/100)
-					
+				# Floor bounds
+				floor_min_x = floor.Position[0] - floor.Size[0] / 2
+				floor_max_x = floor.Position[0] + floor.Size[0] / 2
+				floor_min_z = floor.Position[2] - floor.Size[2] / 2
+				floor_max_z = floor.Position[2] + floor.Size[2] / 2
+				floor_top_y = floor.Position[1]
+	
+				# Point bottom
+				point_bottom = self.Position[1] - self.Size[1] / 2
+	
+				# Check if inside X/Z bounds
+				inside_x = floor_min_x <= self.Position[0] <= floor_max_x
+				inside_z = floor_min_z <= self.Position[2] <= floor_max_z
+	
+				# Check collision with floor
+				if inside_x and inside_z and point_bottom <= floor_top_y:
+					# Snap to surface
+					self.Position[1] = floor_top_y + self.Size[1] / 2
+	
+					# Bounce
+					self.Velocity[1] *= -self.Restitution
+	
+					# Optional friction (this part was odd before)
+					friction = 1 - (f / 100)
+					self.Velocity[0] *= friction
+					self.Velocity[2] *= friction
+		self.Velocity[1] *= 1 + (f / 100)
+
 	def setProperty(self, property: Property, value):
 		success = False
 
 		if property == Property.Position and isinstance(value, tuple):
 			self.Position = list(value)
 			success = True
-	
+
 		elif property == Property.Velocity and isinstance(value, tuple):
 			self.Velocity = list(value)
 			success = True
-	
+
 		elif property == Property.Mass and isinstance(value, int):
 			self.Mass = value
 			success = True
-		
+
 		elif property == Property.Restitution and isinstance(value, float):
 			self.Restitution = value
 			success = True
-		
+
 		elif property == Property.Friction and isinstance(value, int):
 			self.Friction = value
 			success = True
-			
+
 		elif property == Property.Anchored and isinstance(value, bool):
 			self.Anchored = value
 			success = True
-	
+
+		elif property == Property.Size and isinstance(value, tuple):
+			self.Size = value
+			success = True
+
 		if success:
 			if hasattr(self, "_listeners") and property in self._listeners:
 				for callback in self._listeners[property]:
 					callback(value)
-	
+
 			return True, f"Set {property} to {value}"
-	
+
 		return False, None
-	
+
 	def getProperty(self, property: Property):
 		if property == Property.Position: return True, self.Position
 		elif property == Property.Velocity: return True, self.Velocity
@@ -214,22 +260,19 @@ class Object:
 		elif property == Property.Restitution: return True, self.Restitution
 		elif property == Property.Friction: return True, self.Friction
 		elif property == Property.Anchored: return True, self.Anchored
-		else:return(False,None)
-	
+		elif property == Property.Size: return True, self.Size
+		else: return (False, None)
+
 	def propertyChanged(self, property: Property, callback):
 		if property not in self._listeners:
 			self._listeners[property] = []
 		self._listeners[property].append(callback)
 
 
-
 ### MAIN ###
 
-
-
-
 # Example
-'''work = Workspace()
+work = Workspace()
 floor = Object().create("Floor")
 point = Object().create("Point")
 point.setProperty(Property.Restitution, 0.7)
@@ -241,10 +284,12 @@ work.addObject(point)
 work.addObject(floor)
 work.setProperty(Property.AirResistance, 1)
 
+
 # Functions / Helpers
 def stepAll():
 	for obj in work.getAllObjects().values():
 		obj.step()
+
 
 # Main loop
 def main():
@@ -256,7 +301,7 @@ def main():
 			print(obj.Position)
 		TICK += 1
 
+
 # Start program
 
-main()
-'''
+if not LIBRARY_MODE: main()  # if running normally, showcase, otherwise, if library, do not run extra code
