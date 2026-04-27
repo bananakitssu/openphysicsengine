@@ -9,6 +9,11 @@
 
 ---
 
+Identifiers:
+- if it is big text then big update
+
+---
+
 Version: 1.3.0
 <br>
 Current features:
@@ -58,3 +63,12 @@ Updates:
 
 - 33
 - also added anchored property
+
+#1.4.1
+
+- big update!
+- changed floor collisions to actually care about size
+- added size
+- fixed `Property.from_string()`
+- only runs showcase if not in library mode
+- fixed anchored
