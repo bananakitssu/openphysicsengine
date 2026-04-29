@@ -14,6 +14,7 @@ Repo: https://github.com/theothegooddog/openphysicsengine
 from enum import Enum
 from time import sleep
 from math import floor as mfloor
+import turtle as t
 
 ### GLOBALS ###
 
