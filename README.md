@@ -6,6 +6,7 @@
 [OpenPhysicsEngine](https://github.com/theothegooddog/openphysicsengine) is an open-source physics engine that you can use or branch off of for free! It is still in _beta_, but after enough updates, it should be pretty good!
 
 ###### update: its no longer in beta!
+###### unupdate: its actually still in beta
 
 ---
 
@@ -26,7 +27,7 @@ Current features:
 - Gravity
 - Gravity **_direction_**
 <br>
-Requirements: `pip install math time`
+Requirements: `pip install math time turtle enum`
 <br>
 Updates:
 
@@ -38,33 +39,33 @@ Updates:
 
 - added setProperty
 
-1.2.7b
+1.2.7a
 
 - created readme
 
-1.2.8b
+1.2.8a
 
 - added getProperty + changed main loop
 
-1.3.0
+1.3.0a
 
 - added collisions, floors, restitution, and miscellaneous changes
 - also i changed readme to have a/b for alpha/beta
 
-1.3.1
+1.3.1a
 
 - added friction + edited main loop pt. 2
 
-1.3.2
+1.3.2a
 
 - various changes tbh idk what i added
 
-1.3.3
+1.3.3a
 
 - 33
 - also added anchored property
 
-# 1.4.1
+# 1.4.1b
 
 - big update!
 - changed floor collisions to actually care about size
@@ -72,3 +73,6 @@ Updates:
 - fixed `Property.from_string()`
 - only runs showcase if not in library mode
 - fixed anchored
+
+1.4.2b
+- added turtle (renderer note: turtle is aliased to `t`)
