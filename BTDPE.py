@@ -907,7 +907,8 @@ def request_draw_3D (t):
     afterFrame()
 
 def catch_cache (t):
-    t.getscreen().tracer(3000)
+    return
+    /*t.getscreen().tracer(3000)
     t.penup()
     t.hideturtle()
     t.color('gray')
@@ -922,7 +923,7 @@ def catch_cache (t):
     t.forward(100)
     t.end_fill()
     while True:
-        t.color('gray')
+        t.color('gray')*/
 
 def open_starter_screen (t):
     t.getscreen().tracer(3000)

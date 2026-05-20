@@ -16,6 +16,7 @@ from time import sleep
 from math import floor as mfloor
 import turtle as t
 import BTDPE
+import threading
 
 ### GLOBALS ###
 
@@ -296,6 +297,12 @@ def stepAll():
 # Main loop
 def main():
 	global TICK
+    BTDPE_Rendering_Thread = threading.Thread(
+        target=BTDPE.register_turtle,
+        args=( t ),
+        daemon=True
+    )
+    BTDPE_Rendering_Thread.start()
 	while True:
 		sleep(1 / FPS)
 		stepAll()
