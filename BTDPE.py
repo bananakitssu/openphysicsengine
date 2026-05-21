@@ -229,7 +229,7 @@ def create_mesh (meshType, name, position, size, orientation, shadersAllowed, al
             "5": {"x": -0.001, "y": -0.001, "z": -0.001}, "1": {"x": -0.001, "y": 0.001, "z": 0.001}}, \
                           "mesh_rotation": orientation, "mesh_size": size, "textures": textures, "mesh_color_r": color["r"], "mesh_color_g": color["g"], \
                           "mesh_color_b": color["b"], "mesh_attributes": attributes}
-            registered_meshes.append(name)
+            registered_meshes[len(registered_meshes) + 1] = (name)
                           
 
 def get_file_data (file_path):

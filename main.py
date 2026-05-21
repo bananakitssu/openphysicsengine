@@ -326,7 +326,7 @@ def main():
         stepAll()
         for obj in work.getAllObjects().values():
             print(obj.Position)
-            objBTDPE = next((item for item in BTDPE.meshes if item.get("name") == obj.uuid), None)
+            objBTDPE = next((item for item in BTDPE.meshes.values() if item is not None and isinstance(item, dict) and item.get('name') == obj.uuid), None)
             if objBTDPE is None:
                 BTDPE.create_mesh(
                     "cube",
@@ -345,9 +345,9 @@ def main():
                     []
                 )
             else:
-                objBTDPE["position"]["x"] = obj.Position[0]
-                objBTDPE["position"]["y"] = obj.Position[1]
-                objBTDPE["position"]["z"] = obj.Position[2]
+                objBTDPE["mesh_position"]["x"] = obj.Position[0]
+                objBTDPE["mesh_position"]["y"] = obj.Position[1]
+                objBTDPE["mesh_position"]["z"] = obj.Position[2]
         TICK += 1
 
 # Start program
