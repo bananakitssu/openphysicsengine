@@ -30,6 +30,8 @@ global wireframeColor
 global wireframeThickness
 global points
 global meshesShown
+global meshes
+global registered_meshes
 global FOV
 global added_shaders
 global applied_shaders

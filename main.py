@@ -302,14 +302,53 @@ def main():
         args=( t ),
         daemon=True
     )
+    BTDPE.meshes = { }
+    BTDPE.registered_meshes = { }
+    BTDPE.create_mesh(
+        "cube",
+        floor.uuid,
+        {"x": floor.getProperty(Property.Position)[0], "y": floor.getProperty(Property.Position)[1], "z": floor.getProperty(Property.Position[2])},
+        {"x": floor.getProperty(Property.Size)[0], "y": floor.getProperty(Property.Size)[1], "z": floor.getProperty(Property.Size)[2]},
+        {"x": 0, "y": 0, "z": 0},
+        False,
+        [],
+        "",
+        False,
+        False,
+        [],
+        {"r": 0, "g": 0, "b": 0},
+        {"canTransparent": False, "visible": True, "opacity": 1},
+        []
+    )
     BTDPE_Rendering_Thread.start()
 	while True:
 		sleep(1 / FPS)
 		stepAll()
 		for obj in work.getAllObjects().values():
 			print(obj.Position)
-		TICK += 1
-
+            objBTDPE = next((item for item in BTDPE.meshes if item.get("name") == obj.uuid), None)
+            if objBTDPE is None:
+                BTDPE.create_mesh(
+                    "cube",
+                    obj.uuid,
+                    {"x": obj.getProperty(Property.Position)[0], "y": obj.getProperty(Property.Position)[1], "z": obj.getProperty(Property.Position)[2]},
+                    {"x": obj.getProperty(Property.Size)[0], "y": obj.getProperty(Property.Size)[1], "z": obj.getProperty(Property.Size)[2]},
+                    {"x": 0, "y": 0, "z": 0},
+                    False,
+                    [],
+                    "",
+                    False,
+                    False,
+                    [],
+                    {"r": 0, "g": 0, "b": 0},
+                    {"canTransparent": False, "visible": True, "opacity": 1},
+                    []
+                )
+            else:
+                objBTDPE["position"]["x"] = obj.Position[0]
+                objBTDPE["position"]["y"] = obj.Position[1]
+                objBTDPE["position"]["z"] = obj.Position[2]
+   		TICK += 1
 
 # Start program
 
