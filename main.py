@@ -296,7 +296,7 @@ def stepAll():
 
 # Main loop
 def main():
-	global TICK
+    global TICK
     BTDPE_Rendering_Thread = threading.Thread(
         target=BTDPE.register_turtle,
         args=( t ),
@@ -321,11 +321,11 @@ def main():
         []
     )
     BTDPE_Rendering_Thread.start()
-	while True:
-		sleep(1 / FPS)
-		stepAll()
-		for obj in work.getAllObjects().values():
-			print(obj.Position)
+    while True:
+        sleep(1 / FPS)
+        stepAll()
+        for obj in work.getAllObjects().values():
+            print(obj.Position)
             objBTDPE = next((item for item in BTDPE.meshes if item.get("name") == obj.uuid), None)
             if objBTDPE is None:
                 BTDPE.create_mesh(
@@ -348,7 +348,7 @@ def main():
                 objBTDPE["position"]["x"] = obj.Position[0]
                 objBTDPE["position"]["y"] = obj.Position[1]
                 objBTDPE["position"]["z"] = obj.Position[2]
-   		TICK += 1
+        TICK += 1
 
 # Start program
 
