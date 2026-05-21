@@ -307,8 +307,8 @@ def main():
     BTDPE.create_mesh(
         "cube",
         floor.uuid,
-        {"x": floor.getProperty(Property.Position)[0], "y": floor.getProperty(Property.Position)[1], "z": floor.getProperty(Property.Position[2])},
-        {"x": floor.getProperty(Property.Size)[0], "y": floor.getProperty(Property.Size)[1], "z": floor.getProperty(Property.Size)[2]},
+        {"x": floor.Position[0], "y": floor.Position[1], "z": floor.Position[2]},
+        {"x": floor.Size[0], "y": floor.Size[1], "z": floor.Size[2]},
         {"x": 0, "y": 0, "z": 0},
         False,
         [],
@@ -331,8 +331,8 @@ def main():
                 BTDPE.create_mesh(
                     "cube",
                     obj.uuid,
-                    {"x": obj.getProperty(Property.Position)[0], "y": obj.getProperty(Property.Position)[1], "z": obj.getProperty(Property.Position)[2]},
-                    {"x": obj.getProperty(Property.Size)[0], "y": obj.getProperty(Property.Size)[1], "z": obj.getProperty(Property.Size)[2]},
+                    {"x": obj.Position[0], "y": obj.Position[1], "z": obj.Position[2]},
+                    {"x": obj.Size[0], "y": obj.Size[1], "z": obj.Size[2]},
                     {"x": 0, "y": 0, "z": 0},
                     False,
                     [],
