@@ -299,7 +299,7 @@ def main():
     global TICK
     BTDPE_Rendering_Thread = threading.Thread(
         target=BTDPE.register_turtle,
-        args=( t ),
+        args=( t, ),
         daemon=True
     )
     BTDPE.meshes = { }
@@ -320,6 +320,9 @@ def main():
         {"canTransparent": False, "visible": True, "opacity": 1},
         []
     )
+    BTDPE.CamY = 5
+    BTDPE.CamZ = 3
+    BTDPE.CamX = 0
     BTDPE_Rendering_Thread.start()
     while True:
         sleep(1 / FPS)

@@ -229,7 +229,7 @@ def create_mesh (meshType, name, position, size, orientation, shadersAllowed, al
             "5": {"x": -0.001, "y": -0.001, "z": -0.001}, "1": {"x": -0.001, "y": 0.001, "z": 0.001}}, \
                           "mesh_rotation": orientation, "mesh_size": size, "textures": textures, "mesh_color_r": color["r"], "mesh_color_g": color["g"], \
                           "mesh_color_b": color["b"], "mesh_attributes": attributes}
-            registered_meshes[len(registered_meshes) + 1] = (name)
+            registered_meshes[len(registered_meshes)] = (name)
                           
 
 def get_file_data (file_path):
@@ -653,7 +653,7 @@ def draw (t):
             t.hideturtle()
             t.width(wireframeThickness)
             mesh = meshes[meshName]
-            print(mesh)
+            #print(mesh)
             if mesh['type'] == "cube":
                 t.color(wireframeColor)
                 point1 = get_point_position(1, get_mesh_by_name(mesh["name"]))
@@ -904,7 +904,7 @@ def request_draw_3D (t):
     t.goto(-435, -240)
     #t.write(f"FPS: {round(limit_fps / ((elapsed_time / 1000) + 1))} / {round(limit_fps / 1)}", False, 'left', font=('Fredoka One', 10, 'normal'))
     t.write(f"FPS: {fps} / {round(limit_fps / 1)}", False, 'left', font=('Fredoka One', 10, 'normal'))
-    print(f'Requested and ended in {elapsed_time}ms. FPS: {fps}')
+    #print(f'Requested and ended in {elapsed_time}ms. FPS: {fps}')
     #request_draw_3D(t)
     afterFrame()
 
@@ -951,8 +951,8 @@ def main (t):
 
 # get_mesh_by_name("cube")
 
-print(get_point_position("1", get_mesh_by_position(0, 0, -5)))
-print(get_point_position("1", get_mesh_by_name("cube")))
+#print(get_point_position("1", get_mesh_by_position(0, 0, -5)))
+#print(get_point_position("1", get_mesh_by_name("cube")))
 
 def createLine (x1, y1, x2, y2, color, thickness):
     turtle.pensize(1)
